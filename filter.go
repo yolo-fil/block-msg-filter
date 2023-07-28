@@ -1,6 +1,12 @@
 package filter
 
-import "fmt"
+import (
+	"fmt"
+
+	logging "github.com/ipfs/go-log/v2"
+)
+
+var log = logging.Logger("yolo-fil")
 
 // Hello returns a greeting for the named person.
 func Hello(name string) string {
