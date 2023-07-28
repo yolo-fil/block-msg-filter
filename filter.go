@@ -16,7 +16,7 @@ var log = logging.Logger("yolo-fil")
 var timestmp = time.Unix(0, 0)
 var cfg cfgFormat
 
-func FilterList[T any](slice []T)) []T {
+func FilterList[T any](slice []T) []T {
 	log.Infow("yolo-fil filtering")
 	file, err := os.Stat(os.Getenv("YOLO_FIL_CONFIG_PATH"))
 	if err != nil {
