@@ -50,7 +50,7 @@ func Filter[T any](slice []T, predicate func(T, cfgFormat) bool) []T {
 	return result
 }
 
-func PredicateMsgs(msg *types.SignedMessage, cfg cfgFormat) bool {
+func DefaultFilter(msg *types.SignedMessage, cfg cfgFormat) bool {
 	log.Infow("yolo-fil filtering msg:", msg.Message.From.String())
 
 	fmt.Printf("hey: %x", cfg)
