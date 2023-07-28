@@ -40,6 +40,7 @@ func Filter[T any](slice []T, predicate func(T, cfgFormat) bool) []T {
 		}
 		timestmp = modifiedtime
 	}
+	cfg = cfgFormat{}
 	result := make([]T, 0, len(slice))
 	for _, element := range slice {
 		if predicate(element, cfg) {
