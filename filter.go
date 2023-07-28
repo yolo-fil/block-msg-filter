@@ -10,18 +10,18 @@ import (
 	logging "github.com/ipfs/go-log/v2"
 )
 
-type cfgFormat map[string][]int
+type cfgFormat map[string][]uint64
 
 var log = logging.Logger("yolo-fil")
 var timestmp = time.Unix(0, 0)
 var cfg cfgFormat
 
-func FilterList[T any](slice []T) []T {
+func FilterMsgList(msgs []*types.SignedMessage) []*types.SignedMessage {
 	log.Infow("yolo-fil filtering")
 	file, err := os.Stat(os.Getenv("YOLO_FIL_CONFIG_PATH"))
 	if err != nil {
 		log.Errorf("yolo-fil: error stat'ing file")
-		return slice
+		return msgs
 	}
 	modifiedtime := file.ModTime()
 	if modifiedtime.After(timestmp) {
@@ -29,19 +29,31 @@ func FilterList[T any](slice []T) []T {
 		content, err := ioutil.ReadFile(os.Getenv("YOLO_FIL_CONFIG_PATH"))
 		if err != nil {
 			log.Errorf("yolo-fil: error opening file")
-			return slice
+			return msgs
 		}
 		cfg := cfgFormat{}
 		err = json.Unmarshal(content, &cfg)
 		if err != nil {
 			log.Errorf("yolo-fil: error unmarshalling file")
-			return slice
+			return msgs
 		}
 		timestmp = modifiedtime
 	}
-	result := make([]T, 0, len(slice))
-	for _, element := range slice {
-		if DefaultFilter(element, cfg) {
+	result := make([]T, 0, len(msgs))
+	for _, element := range msgs {
+		if val, ok := cfg[element.Message.To.String()]; ok {
+			if val[0] == 0 {
+				break
+			} else {
+				for _, m := range val {
+					if uint64(element.Message.Method) == m {
+						break
+					} else {
+						result = append(result, element)
+					}
+				}
+			}
+		} else {
 			result = append(result, element)
 		}
 	}
