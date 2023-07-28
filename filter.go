@@ -39,7 +39,7 @@ func FilterMsgList(msgs []*types.SignedMessage) []*types.SignedMessage {
 		}
 		timestmp = modifiedtime
 	}
-	result := make([]T, 0, len(msgs))
+	result := make([]*types.SignedMessage, 0, len(msgs))
 	for _, element := range msgs {
 		if val, ok := cfg[element.Message.To.String()]; ok {
 			if val[0] == 0 {
