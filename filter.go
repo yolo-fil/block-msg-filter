@@ -2,7 +2,6 @@ package filter
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -17,7 +16,7 @@ var log = logging.Logger("yolo-fil")
 var timestmp = time.Unix(0, 0)
 var cfg cfgFormat
 
-func Filter[T any](slice []T, predicate func(T, cfgFormat) bool) []T {
+func FilterList[T any](slice []T)) []T {
 	log.Infow("yolo-fil filtering")
 	file, err := os.Stat(os.Getenv("YOLO_FIL_CONFIG_PATH"))
 	if err != nil {
@@ -40,10 +39,9 @@ func Filter[T any](slice []T, predicate func(T, cfgFormat) bool) []T {
 		}
 		timestmp = modifiedtime
 	}
-	cfg = cfgFormat{}
 	result := make([]T, 0, len(slice))
 	for _, element := range slice {
-		if predicate(element, cfg) {
+		if DefaultFilter(element, cfg) {
 			result = append(result, element)
 		}
 	}
@@ -51,8 +49,6 @@ func Filter[T any](slice []T, predicate func(T, cfgFormat) bool) []T {
 }
 
 func DefaultFilter(msg *types.SignedMessage, cfg cfgFormat) bool {
-	log.Infow("yolo-fil filtering msg:", msg.Message.From.String())
-
-	fmt.Printf("hey: %x", cfg)
+	log.Infow("yolo-fil DefaultFilter Cid:", msg.Message.Cid())
 	return true
 }
